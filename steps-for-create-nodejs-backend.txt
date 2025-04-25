@@ -1,0 +1,33 @@
+1.  npm init -y 
+npm install express
+create server.js
+
+2. 
+for mssql in window authentication
+use this
+npm install mssql msnodesqlv8
+
+const sql = require('mssql/msnodesqlv8');
+const config = {
+  server: "MyServer",
+  database: "MyDatabase",
+  options: {
+    trustedConnection: true, // Set to true if using Windows Authentication
+    trustServerCertificate: true, // Set to true if using self-signed certificates
+  },
+  driver: "msnodesqlv8", // Required if using Windows Authentication
+};
+await sql.connect(config);
+const result = await sql.query`select TOP 10 * from MyTable`;
+
+
+3.
+for restart server automatically when save file changes everytime
+npm install --save-dev nodemon
+  "scripts": {
+    "start": "nodemon --inspect ./server.js localhost 3000"
+  },
+
+
+4.
+

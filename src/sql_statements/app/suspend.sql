@@ -1,0 +1,68 @@
+DECLARE @MESSAGE NVARCHAR(MAX) = '',
+        @SELECTED_STUDENT VARCHAR(200) = '';
+
+BEGIN TRY
+  BEGIN TRANSACTION;
+
+  SET @SELECTED_STUDENT = 'student1@gmail.com';
+
+  -- PART 1: CHECK FOR NOT FOUND OR ALREADY SUSPECTED ISSUE
+  IF ((SELECT COUNT(*) FROM Student WHERE [email] = @SELECTED_STUDENT) = 0)
+  BEGIN
+    SET @MESSAGE = 'UNABLE TO FOUND THE SELECTED STUDENT';
+    THROW 51000, @MESSAGE, 1;
+  END
+
+  IF ((SELECT [isActive] FROM Student WHERE [email] = @SELECTED_STUDENT) = 0)
+  BEGIN
+    SET @MESSAGE = 'THE SELECTED STUDENT IS ALREADY SUSPECTED';
+    THROW 51000, @MESSAGE, 1;
+  END
+
+  -- PART 2: CLEAN @SELECTED_STUDENT FROM ALL RECORDS OF STUDENT_EMAIL_LIST
+  --         IN DB OF COMMON STUDENT
+  UPDATE
+	  CommonStudents
+  SET
+	[studentEmailList] = 
+		CASE 
+			WHEN (CHARINDEX(@SELECTED_STUDENT,[studentEmailList], 0) > 0 
+				  AND CHARINDEX(',',[studentEmailList],  CHARINDEX(@SELECTED_STUDENT,[studentEmailList], 0)) <> 0 ) 
+			THEN REPLACE([studentEmailList], @SELECTED_STUDENT + ',', '')
+
+			WHEN (CHARINDEX(@SELECTED_STUDENT,[studentEmailList], 0) > 1 
+				  AND CHARINDEX(',',[studentEmailList],  CHARINDEX(@SELECTED_STUDENT,[studentEmailList], 0)) = 0 ) 
+			THEN REPLACE([studentEmailList], ',' + @SELECTED_STUDENT, '')
+
+			WHEN (CHARINDEX(@SELECTED_STUDENT,[studentEmailList], 0) = 1 
+				  AND CHARINDEX(',',[studentEmailList],  CHARINDEX(@SELECTED_STUDENT,[studentEmailList], 0)) = 0 ) 
+			THEN REPLACE([studentEmailList], @SELECTED_STUDENT, '')
+
+			ELSE [studentEmailList]
+		END 
+  FROM 
+	  CommonStudents;
+
+  
+
+  -- PART 3: SET THE ATTRIBUTE OF ISACTIVE = 0 OF @SELECTED_STUDENT
+  --         IN DB OF STUDENT
+  UPDATE
+	  Student
+  SET
+	  [isActive] = 0
+  WHERE
+	  [email] = @SELECTED_STUDENT; 
+
+
+  COMMIT TRANSACTION;
+
+END TRY
+BEGIN CATCH
+  ROLLBACK TRANSACTION;
+  SET @MESSAGE = 'AN ERROR OCCURRED: ' + ERROR_MESSAGE();
+  THROW 51000, @MESSAGE, 1;
+END CATCH
+
+
+SELECT @MESSAGE AS [message];

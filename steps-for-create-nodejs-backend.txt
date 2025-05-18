@@ -20,6 +20,17 @@ const config = {
 await sql.connect(config);
 const result = await sql.query`select TOP 10 * from MyTable`;
 
+OR 
+for mssql in sql server authentication (docker)
+ . RUN "npm run docker:up"
+ . Connect the MSSQL server with 
+   server name: localhost,1433
+   login: sa
+   password: P@ssw0rd12345
+ . EXECUTE THE SCRIPT /src/patched_data/tables.sql
+ . EXECUTE THE SCRIPT /scr/patched_data/sql_patched_1.sql
+
+
 
 3.
 for restart server automatically when save file changes everytime
@@ -28,6 +39,4 @@ npm install --save-dev nodemon
     "start": "nodemon --inspect ./server.js localhost 3000"
   },
 
-
-4.
 

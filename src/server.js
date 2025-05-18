@@ -1,5 +1,6 @@
 const express = require("express");
-const sql = require("mssql/msnodesqlv8");
+// const sql = require("mssql/msnodesqlv8"); // windows authentication
+const sql = require("mssql");
 const fs = require('fs');
 
 const app = express();
@@ -7,20 +8,34 @@ app.use(express.json());
 
 const sql_statements_folder = "src/sql_statements/";
 
-// SQL Server configuration
-var config = {
-    // "user": "  ", // Database username
-    // "password": "  ", // Database password
-    "server": "CHRISTINE-LAPTO\\SQLEXPRESS", // Server IP address
-    "database": "backend_nodejs", // Database name
-    "options": {
-        "encrypt": false, // Disable encryption
-        "trustedConnection": true
-    },
-    driver: "msnodesqlv8",
-}
+// // SQL Server configuration for windows authentication 
+// // SQL Server configuration
+// var config = {
+//     // "user": "  ", // Database username
+//     // "password": "  ", // Database password
+//     "server": "CHRISTINE-LAPTO\\SQLEXPRESS", // Server IP address
+//     "database": "backend_nodejs", // Database name
+//     "options": {
+//         "encrypt": false, // Disable encryption
+//         "trustedConnection": true
+//     },
+//     driver: "msnodesqlv8",
+// }
 
 // Connect to SQL Server
+
+var config = {
+    user: "sa",
+    password: "P@ssw0rd12345",
+    server: "localhost",
+    database: "backend_nodejs",
+    options: {
+        encrypt: false,
+        trustServerCertificate: true
+    },
+    port: 1433,
+};
+
 sql.connect(config, err => {
     if (err) {
         throw err;

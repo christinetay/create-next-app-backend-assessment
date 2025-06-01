@@ -1,4 +1,4 @@
-describe('API Tests', () => {
+describe('API Tests - list students', () => {
   const rootApiUrl = 'http://localhost:3000';
 
   beforeAll(() => { 
@@ -17,7 +17,7 @@ describe('API Tests', () => {
     global.fetch.mockRestore?.();
   });
   
-  it('should return a 200 status for the root endpoint', async () => {
+  it('should return a 200 status for listing students', async () => {
     const response = await fetch(`${rootApiUrl}/list-students`);
     expect(response.status).toBe(200);
   });

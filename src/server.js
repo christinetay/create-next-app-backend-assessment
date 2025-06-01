@@ -73,6 +73,13 @@ app.post("/add-student", async (request, response) => {
     var methodName = "@@ /ADD-STUDENT - ";
     console.log(methodName + "start ...");
 
+    // Validation
+    if (!params.name || !params.email) {
+        console.error(methodName + "Invalid student data");
+        response.status(400).send({ error: "Invalid student data" });
+        return;
+    }
+
     var sqlStatement = fs.readFileSync(sql_statements_folder + "add-student.sql", "utf-8");
     console.log(methodName + "sqlStatement:", sqlStatement);
 

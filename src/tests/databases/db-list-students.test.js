@@ -1,4 +1,4 @@
-describe('Database Tests (Mocked)', () => {
+describe('Database Tests for list students (Mocked)', () => {
 
   jest.mock('mssql');
   const sql = require('mssql');

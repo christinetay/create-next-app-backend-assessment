@@ -102,12 +102,19 @@ app.post("/add-student", async (request, response) => {
 
 //NOTE: TO UPDATE STUDENT FROM DB
 app.post("/update-student", async (request, response) => {
-    var isActive = request.body.isActive? 1: 0;
     var params = request.body;
 
     var methodName = "@@ /UPDATE-STUDENT - ";
     console.log(methodName + "start ...");
 
+    // Validation
+    if (!params.id || !params.name || !params.email || typeof params.isActive !== 'boolean') {
+        console.error(methodName + "Invalid student data");
+        response.status(400).send({ error: "Invalid student data" });
+        return;
+    }
+
+    var isActive = params.isActive? 1: 0;
     var sqlStatement = fs.readFileSync(sql_statements_folder + "update-student.sql", "utf-8");
     console.log(methodName + "sqlStatement:", sqlStatement);
 
